@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "rc-switch/RCSwitch.h"
 #include <iostream>
+#include <chrono>
 
 using namespace std;
 
@@ -11,7 +12,12 @@ int main(int argc, char *argv[]) {
     printf("\n");
     
     int PIN = 2; // this is pin 13, aka GPIO22 on the PI3, see https://www.element14.com/community/servlet/JiveServlet/previewBody/73950-102-10-339300/pi3_gpio.png
-    uint64_t lastValue;
+    unsigned long int lastValue;
+    unsigned long int ref = 0;
+    unsigned long int aux = 0;
+
+    auto start = std::chrono::high_resolution_clock::now();
+
 
     if (wiringPiSetup () == -1) {
         printf("ERROR: WiringPi not installed. Make sure you have WiringPi installed.\n");
@@ -32,15 +38,23 @@ int main(int argc, char *argv[]) {
 
     mySwitch.enableReceive(PIN);
 
-    printf("Listening\n");
+    printf("Listening:\n");
 
     while(true) {
 
         if (mySwitch.available()) {
             unsigned long int value = mySwitch.getReceivedValue();
             if (value != 0 && value != lastValue) {
-		        cout<<(unsigned long int)mySwitch.getReceivedValue()<<" - "<<mySwitch.getReceivedProtocol()<<endl;
-		        lastValue = value;
+                if(mySwitch.getReceivedProtocol() == 4){
+                    ref = (unsigned long int)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count();
+                    cout<<"Resetado\n";
+                }
+		        
+                aux = (unsigned long int)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count();
+
+                cout<<(aux-ref)-(unsigned long int)mySwitch.getReceivedValue()<<" - "<<mySwitch.getReceivedProtocol()<<endl;
+		        
+                lastValue = value;
             }
             mySwitch.resetAvailable();
         }
