@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
     // put the PIN into no-pull/up down state:
     // see https://github.com/ninjablocks/433Utils/issues/21
-    pullUpDnControl(PIN, PUD_OFF);
+    pullUpDnControl(PIN_rx, PUD_OFF);
 
     RCSwitch myTx = RCSwitch();
     RCSwitch myRx = RCSwitch();
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
         cicle++;
 
         if (myRx.available()) {
-            cout<<myRX.getReceivedValue()<<" - "<<myRx.getReceivedProtocol()<<endl;
+            cout<<myRx.getReceivedValue()<<" - "<<myRx.getReceivedProtocol()<<endl;
         }
 
         delay(1000);
