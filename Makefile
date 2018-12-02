@@ -8,7 +8,7 @@ senddemo: rc-switch/RCSwitch.o senddemo.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $+ -o $@ -lwiringPi
 
 receivedemo: rc-switch/RCSwitch.o receivedemo.o
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $+ -o $@ -lwiringPi
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $+ -o $@ -lwiringPi -lpthread
 
 receivedemo_json: rc-switch/RCSwitch.o receivedemo_json.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $+ -o $@ -lwiringPi
