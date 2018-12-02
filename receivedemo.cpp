@@ -11,7 +11,11 @@ int main(int argc, char *argv[]) {
     printf("Make sure you have connected the 433Mhz receiver data pin to WiringPi pin 2 (real pin 13). See: https://pinout.xyz/pinout/pin13_gpio27\n");
     printf("\n");
     
-    int PIN = 2; // this is pin 13, aka GPIO22 on the PI3, see https://www.element14.com/community/servlet/JiveServlet/previewBody/73950-102-10-339300/pi3_gpio.png
+    int PIN_tx = 0;
+    int PIN_rx = 2; // this is pin 13, aka GPIO22 on the PI3, see https://www.element14.com/community/servlet/JiveServlet/previewBody/73950-102-10-339300/pi3_gpio.png
+
+    int cicle = 0;
+
     unsigned long int lastValue;
     unsigned long int ref = 0;
     unsigned long int aux = 0;
@@ -34,29 +38,42 @@ int main(int argc, char *argv[]) {
     // see https://github.com/ninjablocks/433Utils/issues/21
     pullUpDnControl(PIN, PUD_OFF);
 
-    RCSwitch mySwitch = RCSwitch();
+    RCSwitch myTx = RCSwitch();
+    RCSwitch myRx = RCSwitch();
 
-    mySwitch.enableReceive(PIN);
+    // Transmitter is connected
+    myTx.enableTransmit(PIN_tx);
+    myRx.enableReceive(PIN_rx);
 
     printf("Listening:\n");
 
     while(true) {
 
-        if (mySwitch.available()) {
-            unsigned long int value = mySwitch.getReceivedValue();
-            if (value != 0 && value != lastValue) {
-                if(mySwitch.getReceivedProtocol() == 4){
-                    ref = (unsigned long int)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count();
-                    cout<<"Resetado\n";
-                }
-		        
-                aux = (unsigned long int)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count();
+        myTx.setProtocol(1);
+        myTx.send(cicle%1024, 32);
+        cicle++;
 
-                cout<<(aux-ref)-(unsigned long int)mySwitch.getReceivedValue()<<" - "<<mySwitch.getReceivedProtocol()<<endl;
-		        
-                lastValue = value;
-            }
-            mySwitch.resetAvailable();
+        if (myRx.available()) {
+            cout<<myRX.getReceivedValue()<<" - "<<myRx.getReceivedProtocol()<<endl;
         }
+
+        delay(1000);
+
+        // if (mySwitch.available()) {
+        //     unsigned long int value = mySwitch.getReceivedValue();
+        //     if (value != 0 && value != lastValue) {
+        //         if(mySwitch.getReceivedProtocol() == 4){
+        //             ref = (unsigned long int)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count();
+        //             cout<<"Resetado\n";
+        //         }
+		        
+        //         aux = (unsigned long int)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count();
+
+        //         cout<<(aux-ref)-(unsigned long int)mySwitch.getReceivedValue()<<" - "<<mySwitch.getReceivedProtocol()<<endl;
+		        
+        //         lastValue = value;
+        //     }
+        //     mySwitch.resetAvailable();
+        // }
     }
 }
