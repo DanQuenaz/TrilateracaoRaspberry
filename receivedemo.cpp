@@ -11,13 +11,15 @@ int PIN_rx = 2;
 
 int cicle = 1;
 
+high_resolution_clock::time_point time1;
+
 RCSwitch myTx;
 RCSwitch myRx;
 
 void *sendMessages(void *threadid) {
     while(1){
         myTx.setProtocol(1);
-        auto time1 = std::chrono::high_resolution_clock::now();
+        time1 = std::chrono::high_resolution_clock::now();
         myTx.send(cicle%1024, 32);
 
         cicle++;
