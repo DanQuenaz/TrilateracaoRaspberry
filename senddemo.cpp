@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <iostream>
 #include "rc-switch/RCSwitch.h"
-#include <chrono>
 
 using namespace std;
 
@@ -21,6 +20,8 @@ int main(int argc, char *argv[]) {
     //pinMode(1, OUTPUT);         // configura pino 1 como saida
 	pinMode(5, INPUT);          // configura pino 5 como entrada
 	//pullUpDnControl(5, PUD_OFF); // configura resistor pull-up no pino 5 
+
+    pullUpDnControl(PIN_rx, PUD_OFF);
 
     RCSwitch myTx = RCSwitch();
     RCSwitch myRx = RCSwitch();
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]) {
             if (myRx.available()) {
                 if(myRx.getReceivedProtocol() == 1){
                     if(myRx.getReceivedValue() != last_value){
-                        myTx.send(myRx.getReceivedValue(), 32);
+                        myTx.send(myRx.getReceivedValue()+2000, 32);
                         cout<<"Atena 1 respondeu"<<endl;
                         last_value = myRx.getReceivedValue();    
                     }
