@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
                 if(myRx.getReceivedProtocol() == 1){
                     if(myRx.getReceivedValue() != last_value){
                         myTx.send(myRx.getReceivedValue(), 32);
+                        cout<<"Atena 1 respondeu"<<endl;
                         last_value = myRx.getReceivedValue();    
                     }
                      
