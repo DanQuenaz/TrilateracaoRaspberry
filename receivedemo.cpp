@@ -16,12 +16,6 @@ int main(int argc, char *argv[]) {
 
     int cicle = 0;
 
-    unsigned long int lastValue;
-    unsigned long int ref = 0;
-    unsigned long int aux = 0;
-
-    auto start = std::chrono::high_resolution_clock::now();
-
 
     if (wiringPiSetup () == -1) {
         printf("ERROR: WiringPi not installed. Make sure you have WiringPi installed.\n");
@@ -50,11 +44,16 @@ int main(int argc, char *argv[]) {
     while(true) {
 
         myTx.setProtocol(1);
+        auto time1 = std::chrono::high_resolution_clock::now();
         myTx.send(cicle%1024, 32);
+
+
+
         cicle++;
 
         if (myRx.available()) {
-            cout<<myRx.getReceivedValue()<<" - "<<myRx.getReceivedProtocol()<<endl;
+            long double xxTTIME = (long double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-time1).count();
+            cout<<myRx.getReceivedValue()<<" - "<<myRx.getReceivedProtocol()<<": "<<xxTTIME<<endl;
         }
 
         delay(1000);
