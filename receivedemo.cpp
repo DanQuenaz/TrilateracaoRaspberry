@@ -11,7 +11,7 @@ int PIN_rx = 2;
 
 int cicle = 1;
 
-high_resolution_clock::time_point time1;
+std::chrono::high_resolution_clock::time_point time1;
 
 RCSwitch myTx;
 RCSwitch myRx;
@@ -75,4 +75,6 @@ int main(int argc, char *argv[]) {
         delay(1000);
 
     }
+
+    pthread_exit(NULL);
 }
